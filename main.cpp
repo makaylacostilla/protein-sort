@@ -27,8 +27,8 @@ void merge(vector<std::string>& arr, int left, int mid, int right){
         rightArr[j] = arr[mid + 1 + j];
     }
 
-    auto i = 0;
-    auto j = 0;
+    int i = 0;
+    int j = 0;
     int k = left;
 
     while (i < arr1 && j < arr2){
@@ -95,9 +95,6 @@ void quickSortReversed(vector<std::string>& arr, int low, int high){
 }
 
 int main() {
-    //test
-    //int arr[] = {12, 11, 13, 5, 6, 7};
-    //int size = sizeof(arr)/sizeof(arr[0]);
 
     sf::RenderWindow window(sf::VideoMode(1000, 750), "Protein Sort", sf::Style::Close);
     sf::Font font;
@@ -137,6 +134,7 @@ int main() {
     listBox.setPosition(24, 485);
 
 
+    //if including, need to find image of switch
     sf::Text verifiedText("Include Unverified Proteins", font, 12);
     verifiedText.setFillColor(sf::Color(35, 35, 35, 255));
     verifiedText.setPosition(97, 43);
@@ -165,7 +163,6 @@ int main() {
     desText.setFillColor(sf::Color::Black);
     desText.setPosition(820, 399);
 
-    //regarding these two, the two sorts have to be used somewhere, so here unless not
     sf::RectangleShape merge(sf::Vector2f(139, 40));
     merge.setOutlineColor(sf::Color::Black);
     merge.setFillColor(sf::Color(68, 119, 207));
@@ -196,12 +193,6 @@ int main() {
                 window.close();
             }
             if (event.type == sf::Event::TextEntered){
-
-                input.push_back(event.text.unicode);
-                output.setString(input + "|");
-                output.setPosition(34, 103);
-
-                //backspace does not work :(
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::Backspace) && input.length() != 0){
                     input.pop_back();
                     output.setString(input + "|");
@@ -210,7 +201,14 @@ int main() {
                 else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter) && input.length() != 0){
                     //search for protein name
                     //change proteinName to name
+                    //proteinName.setString("name");
                     //change proteinSequence to sequence
+                    //proteinSequence.setString("sequence");
+                }
+                else{
+                    input.push_back(event.text.unicode);
+                    output.setString(input + "|");
+                    output.setPosition(34, 103);
                 }
             }
 
