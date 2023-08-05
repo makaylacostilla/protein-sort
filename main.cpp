@@ -1,16 +1,24 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include <vector>
+#include <stdlib.h>
 #include "Parser.h"
 
 using namespace  std;
 
+void swap(string* s1, string* s2){
+    string temp = *s1;
+    *s1 = *s2;
+    *s2 = temp;
+
+}
+
 //generic merge sort
-void merge(int arr[], int left, int mid, int right){
+void merge(vector<std::string>& arr, int left, int mid, int right){
     int arr1 = mid - left + 1;
     int arr2 = right - mid;
-    auto *leftArr = new int[arr1];
-    auto *rightArr = new int[arr2];
+    auto *leftArr = new std::string[arr1];
+    auto *rightArr = new std::string[arr2];
 
     for (auto i = 0; i < arr1; i++){
         leftArr[i] = arr[left+i];
@@ -51,7 +59,7 @@ void merge(int arr[], int left, int mid, int right){
     delete[] rightArr;
 }
 
-void mergeSort(int arr[], int l, int r){
+void mergeSort(vector<std::string>& arr, int l, int r){
     if (l >= r){
         return;
     }
@@ -63,37 +71,30 @@ void mergeSort(int arr[], int l, int r){
 }
 
 //generic quick sort
-int partition(int arr[], int low, int high){
-    int pivot = arr[high];
+int partitionReversed(vector<std::string>& arr, int low, int high){
+    swap(&arr[rand() % (high-low+1) + low], &arr[high]);
+    std::string pivot = arr[high];
 
     int i = low - 1;
     for (int j = low; j <= high - 1; j++){
-        if (arr[j] < pivot){
+        if (arr[j] > pivot){
             i++;
-            swap(arr[i], arr[j]);
+            swap(&arr[i], &arr[j]);
         }
     }
-    swap(arr[i + 1], arr[high]);
+    swap(&arr[i + 1], &arr[high]);
     return (i+1);
 }
 
-void quickSort(int arr[], int low, int high){
+void quickSortReversed(vector<std::string>& arr, int low, int high){
     if (low < high) {
-        int pivot = partition(arr, low, high);
-        quickSort(arr, low, pivot - 1);
-        quickSort(arr, pivot + 1, high);
+        int pivot = partitionReversed(arr, low, high);
+        quickSortReversed(arr, low, pivot - 1);
+        quickSortReversed(arr, pivot + 1, high);
     }
 }
 
 int main() {
-
-    std::vector<std::string> proteinIdVec;
-    std::unordered_map<std::string, Protein> proteinsMap;
-    Parser ToUse;
-    ToUse.ParseFile("../uniprotkb.fasta", proteinsMap, proteinIdVec);
-    //Vector and Hash map are now ready
-
-
     //test
     //int arr[] = {12, 11, 13, 5, 6, 7};
     //int size = sizeof(arr)/sizeof(arr[0]);
@@ -275,6 +276,18 @@ int main() {
         window.display();
     }
 
+    std::vector<std::string> proteinIdVec;
+    std::unordered_map<std::string, Protein> proteinsMap;
+    Parser ToUse;
+    ToUse.ParseFile("../uniprotkb.fasta", proteinsMap, proteinIdVec);
+
+    //Sort descending (quicksort):
+    quickSortReversed(proteinIdVec, 0, proteinIdVec.size()-1);
+    std::cout << proteinIdVec[0] << "|" << *(--proteinIdVec.end()) << std::endl;
+
+    //Sort ascending (merge sort)
+    mergeSort(proteinIdVec, 0, proteinIdVec.size()-1);
+    std::cout << proteinIdVec[0] << "|" << *(--proteinIdVec.end()) << std::endl;
 
     return 0;
 }
