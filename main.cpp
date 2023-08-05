@@ -1,5 +1,5 @@
 #include <iostream>
-//#include <SFML/Graphics.hpp>
+#include <SFML/Graphics.hpp>
 #include <vector>
 #include <random>
 #include "Parser.h"
