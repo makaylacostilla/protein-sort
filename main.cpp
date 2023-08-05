@@ -1,6 +1,7 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include <vector>
+#include "Parser.h"
 
 using namespace  std;
 
@@ -85,6 +86,14 @@ void quickSort(int arr[], int low, int high){
 }
 
 int main() {
+
+    std::vector<std::string> proteinIdVec;
+    std::unordered_map<std::string, Protein> proteinsMap;
+    Parser ToUse;
+    ToUse.ParseFile("../uniprotkb.fasta", proteinsMap, proteinIdVec);
+    //Vector and Hash map are now ready
+
+
     //test
     //int arr[] = {12, 11, 13, 5, 6, 7};
     //int size = sizeof(arr)/sizeof(arr[0]);
@@ -265,6 +274,7 @@ int main() {
 
         window.display();
     }
+
 
     return 0;
 }
