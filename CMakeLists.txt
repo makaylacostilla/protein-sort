@@ -3,7 +3,7 @@ project(protein_sort)
 
 set(CMAKE_CXX_STANDARD 11)
 
-add_executable(protein_sort main.cpp)
+add_executable(protein_sort main.cpp Parser.cpp)
 
 set(SFML_STATIC_LIBRARIES TRUE)
 set(SFML_DIR C:/SFML/lib/cmake/SFML)
