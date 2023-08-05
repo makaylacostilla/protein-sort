@@ -1,100 +1,25 @@
 #include <iostream>
-#include <SFML/Graphics.hpp>
+//#include <SFML/Graphics.hpp>
 #include <vector>
-#include <stdlib.h>
+#include <random>
 #include "Parser.h"
+#include "Sorts.h"
 
 using namespace  std;
 
-void swap(string* s1, string* s2){
-    string temp = *s1;
-    *s1 = *s2;
-    *s2 = temp;
 
-}
-
-//generic merge sort
-void merge(vector<std::string>& arr, int left, int mid, int right){
-    int arr1 = mid - left + 1;
-    int arr2 = right - mid;
-    auto *leftArr = new std::string[arr1];
-    auto *rightArr = new std::string[arr2];
-
-    for (auto i = 0; i < arr1; i++){
-        leftArr[i] = arr[left+i];
-    }
-    for (auto j = 0; j < arr2; j++){
-        rightArr[j] = arr[mid + 1 + j];
-    }
-
-    int i = 0;
-    int j = 0;
-    int k = left;
-
-    while (i < arr1 && j < arr2){
-        if (leftArr[i] <= rightArr[j]){
-            arr[k] = leftArr[i];
-            i++;
-        }
-        else{
-            arr[k] = rightArr[j];
-            j++;
-        }
-        k++;
-    }
-
-    while (i < arr1){
-        arr[k] = leftArr[i];
-        i++;
-        k++;
-    }
-
-    while (j < arr2){
-        arr[k] = rightArr[j];
-        j++;
-        k++;
-    }
-
-    delete[] leftArr;
-    delete[] rightArr;
-}
-
-void mergeSort(vector<std::string>& arr, int l, int r){
-    if (l >= r){
-        return;
-    }
-
-    int m = l + (r - l)/2;
-    mergeSort(arr, l, m);
-    mergeSort(arr, m + 1, r);
-    merge(arr, l, m, r);
-}
-
-//generic quick sort
-int partitionReversed(vector<std::string>& arr, int low, int high){
-    swap(&arr[rand() % (high-low+1) + low], &arr[high]);
-    std::string pivot = arr[high];
-
-    int i = low - 1;
-    for (int j = low; j <= high - 1; j++){
-        if (arr[j] > pivot){
-            i++;
-            swap(&arr[i], &arr[j]);
-        }
-    }
-    swap(&arr[i + 1], &arr[high]);
-    return (i+1);
-}
-
-void quickSortReversed(vector<std::string>& arr, int low, int high){
-    if (low < high) {
-        int pivot = partitionReversed(arr, low, high);
-        quickSortReversed(arr, low, pivot - 1);
-        quickSortReversed(arr, pivot + 1, high);
-    }
-}
 
 int main() {
+    //test
+    //int arr[] = {12, 11, 13, 5, 6, 7};
+    //int size = sizeof(arr)/sizeof(arr[0]);
+
+    //Set up protein data objects
+    std::vector<std::string> proteinIdVec;
+    std::unordered_map<std::string, Protein> proteinsMap;
+    Parser ToUse;
+    ToUse.ParseFile("../uniprotkb.fasta", proteinsMap, proteinIdVec);
+    int idVectorIndex = 0;
 
     sf::RenderWindow window(sf::VideoMode(1000, 750), "Protein Sort", sf::Style::Close);
     sf::Font font;
@@ -134,7 +59,6 @@ int main() {
     listBox.setPosition(24, 485);
 
 
-    //if including, need to find image of switch
     sf::Text verifiedText("Include Unverified Proteins", font, 12);
     verifiedText.setFillColor(sf::Color(35, 35, 35, 255));
     verifiedText.setPosition(97, 43);
@@ -163,6 +87,7 @@ int main() {
     desText.setFillColor(sf::Color::Black);
     desText.setPosition(820, 399);
 
+    //regarding these two, the two sorts have to be used somewhere, so here unless not
     sf::RectangleShape merge(sf::Vector2f(139, 40));
     merge.setOutlineColor(sf::Color::Black);
     merge.setFillColor(sf::Color(68, 119, 207));
@@ -187,12 +112,18 @@ int main() {
     int choice2 = 1;
 
     while (window.isOpen()){
-        sf::Event event{};
+        sf::Event event;
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
                 window.close();
             }
             if (event.type == sf::Event::TextEntered){
+
+                input.push_back(event.text.unicode);
+                output.setString(input + "|");
+                output.setPosition(34, 103);
+
+                //backspace does not work :(
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::Backspace) && input.length() != 0){
                     input.pop_back();
                     output.setString(input + "|");
@@ -200,15 +131,18 @@ int main() {
                 }
                 else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter) && input.length() != 0){
                     //search for protein name
-                    //change proteinName to name
-                    //proteinName.setString("name");
-                    //change proteinSequence to sequence
-                    //proteinSequence.setString("sequence");
-                }
-                else{
-                    input.push_back(event.text.unicode);
-                    output.setString(input + "|");
-                    output.setPosition(34, 103);
+                    try {
+                        current = proteinsMap[input];
+                        //change proteinName to name
+                        proteinName.setString(current._id);
+                        //change proteinSequence to sequence
+                        proteinSequence.setString(current._sequence);
+                    }
+                    catch(std::out_of_range) {
+                        std::cout << "Protein does not exist in dataset" << endl;
+                        proteinName.setString("Not found");
+                        proteinSequence.setString("The protein Id was not found in this dataset. Please try again.");
+                    }
                 }
             }
 
@@ -238,16 +172,27 @@ int main() {
         }
         if (choice1 == 1 && choice2 == 1){
             //do merge ascending
+            mergeSortAscending(proteinIdVec, 0, proteinIdVec.size() - 1);
         }
         if (choice1 == 1 && choice2 == 2 ){
-            //do merge descending
+            mergeSortDescending(proteinIdVec, 0, proteinIdVec.size() - 1);
         }
         if (choice1 == 2 && choice2 == 1){
             //do quick sort ascending
+            quickSortAscending(proteinIdVec, 0, proteinIdVec.size() - 1);
         }
         if (choice1 == 2 && choice2 == 2){
             //do quick descending
+            quickSortReversed(proteinIdVec, 0, proteinIdVec.size() - 1);
         }//and then somehow print the sorted stuff
+
+        text.setString(
+                proteinIdVec[idVectorIndex    ] + "\n" +
+                proteinIdVec[idVectorIndex + 1] + "\n" +
+                proteinIdVec[idVectorIndex + 2] + "\n" +
+                proteinIdVec[idVectorIndex + 3] + "\n" +
+                proteinIdVec[idVectorIndex + 4]
+        )
 
         window.clear(sf::Color::White);
         window.draw(verifiedText);
@@ -273,19 +218,6 @@ int main() {
 
         window.display();
     }
-
-    std::vector<std::string> proteinIdVec;
-    std::unordered_map<std::string, Protein> proteinsMap;
-    Parser ToUse;
-    ToUse.ParseFile("../uniprotkb.fasta", proteinsMap, proteinIdVec);
-
-    //Sort descending (quicksort):
-    quickSortReversed(proteinIdVec, 0, proteinIdVec.size()-1);
-    std::cout << proteinIdVec[0] << "|" << *(--proteinIdVec.end()) << std::endl;
-
-    //Sort ascending (merge sort)
-    mergeSort(proteinIdVec, 0, proteinIdVec.size()-1);
-    std::cout << proteinIdVec[0] << "|" << *(--proteinIdVec.end()) << std::endl;
 
     return 0;
 }
