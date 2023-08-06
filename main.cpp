@@ -1,7 +1,6 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include <vector>
-#include <random>
 #include "Parser.h"
 #include "Sorts.h"
 
@@ -110,6 +109,7 @@ int main() {
     //will be used to decide how to sort
     int choice1 = 1;
     int choice2 = 1;
+    bool update = false;
 
     while (window.isOpen()){
         sf::Event event;
@@ -151,38 +151,46 @@ int main() {
                     merge.setFillColor(sf::Color(68, 119, 207));
                     quick.setFillColor(sf::Color::White);
                     choice1 = 1;
+                    update = true;
                 }
                 if (q.contains(event.mouseButton.x, event.mouseButton.y)){
                     quick.setFillColor(sf::Color(68, 119, 207));
                     merge.setFillColor(sf::Color::White);
                     choice1 = 2;
+                    update = true;
                 }
                 if (a.contains(event.mouseButton.x, event.mouseButton.y)){
                     ascending.setFillColor(sf::Color(68, 119, 207));
                     descending.setFillColor(sf::Color::White);
                     choice2 = 1;
+                    update = true;
                 }
                 if (d.contains(event.mouseButton.x, event.mouseButton.y)){
                     descending.setFillColor(sf::Color(68, 119, 207));
                     ascending.setFillColor(sf::Color::White);
                     choice2 = 2;
+                    update = true;
                 }
             }
         }
-        if (choice1 == 1 && choice2 == 1){
+        if (choice1 == 1 && choice2 == 1 && update == true){
             //do merge ascending
             mergeSortAscending(proteinIdVec, 0, proteinIdVec.size() - 1);
+            update = false;
         }
-        if (choice1 == 1 && choice2 == 2 ){
+        if (choice1 == 1 && choice2 == 2 && update == true){
             mergeSortDescending(proteinIdVec, 0, proteinIdVec.size() - 1);
+            update = false;
         }
-        if (choice1 == 2 && choice2 == 1){
+        if (choice1 == 2 && choice2 == 1 && update == true){
             //do quick sort ascending
             quickSortAscending(proteinIdVec, 0, proteinIdVec.size() - 1);
+            update = false;
         }
-        if (choice1 == 2 && choice2 == 2){
+        if (choice1 == 2 && choice2 == 2 && update == true){
             //do quick descending
             quickSortReversed(proteinIdVec, 0, proteinIdVec.size() - 1);
+            update = false;
         }//and then somehow print the sorted stuff
 
         text.setString(
