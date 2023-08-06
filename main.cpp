@@ -9,9 +9,6 @@ using namespace  std;
 
 
 int main() {
-    //test
-    //int arr[] = {12, 11, 13, 5, 6, 7};
-    //int size = sizeof(arr)/sizeof(arr[0]);
 
     //Set up protein data objects
     std::vector<std::string> proteinIdVec;
@@ -125,8 +122,6 @@ int main() {
             }
             if (event.type == sf::Event::TextEntered){
 
-
-                //backspace does not work :(
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::Backspace) && input.length() != 0){
                     input.pop_back();
                     output.setString(input + "|");
