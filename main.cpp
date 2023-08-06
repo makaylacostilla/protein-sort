@@ -132,11 +132,10 @@ int main() {
                 else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter) && input.length() != 0){
                     //search for protein name
                     try {
-                        current = proteinsMap[input];
                         //change proteinName to name
-                        proteinName.setString(current._id);
+                        proteinName.setString(sf::string(proteinsMap[input]._id));
                         //change proteinSequence to sequence
-                        proteinSequence.setString(current._sequence);
+                        proteinSequence.setString(sf::string(proteinsMap[input]._sequence));
                     }
                     catch(std::out_of_range) {
                         std::cout << "Protein does not exist in dataset" << endl;
@@ -192,7 +191,7 @@ int main() {
                 proteinIdVec[idVectorIndex + 2] + "\n" +
                 proteinIdVec[idVectorIndex + 3] + "\n" +
                 proteinIdVec[idVectorIndex + 4]
-        )
+        );
 
         window.clear(sf::Color::White);
         window.draw(verifiedText);
