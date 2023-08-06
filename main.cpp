@@ -135,16 +135,16 @@ int main() {
                 else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter) && input.length() != 0){
                     //search for protein name
                     //get protein name and sequence
-                    currentId = proteinsMap.at(input)._id;
-                    currentSeq = proteinsMap.at(input)._sequence;
-                    idVectorIndex = findInSortedVec(proteinIdVec, input, 0, proteinIdVec.size() - 1, choice2 == 2);
+                    try {
+                        currentId = proteinsMap.at(input)._id;
+                        currentSeq = proteinsMap.at(input)._sequence;
+                        idVectorIndex = findInSortedVec(proteinIdVec, input, 0, proteinIdVec.size() - 1, choice2 == 2);
 
-                    if (idVectorIndex != -1) {
                         //change displayed values of name and sequence
                         proteinName.setString(currentId);
                         proteinSequence.setString(currentSeq);
                     }
-                    else{//did not find input in vec, try using it as index
+                    catch(out_of_range){//did not find input in vec, try using it as index
                         //used https://stackoverflow.com/a/4654718
                         std::string::const_iterator it = input.begin();
                         while (it != input.end() && std::isdigit(*it)) ++it;
@@ -221,9 +221,10 @@ int main() {
         }//and then somehow print the sorted stuff
 
         listStr = "";
-        for (int i = 0; i<11; i++){
+        for (int i = 0; i<10; i++){
             try{
-                listStr += proteinIdVec[idVectorIndex + i] + "\n";
+                listStr += to_string(idVectorIndex + i)+ "\t";
+                listStr +=  proteinIdVec[idVectorIndex + i] + "\n";
             }
             catch(out_of_range){}
         }
