@@ -40,9 +40,7 @@ int main() {
     resultBox.setFillColor(sf::Color(191, 230, 245, 255));
     resultBox.setPosition(26, 175);
 
-    sf::Text text(" ", font, 17);
-    text.setFillColor(sf::Color(58, 58, 58, 255));
-    text.setPosition(24, 84);
+
 
     sf::Text proteinName("[Protein Name]", font, 24);
     proteinName.setFillColor(sf::Color(58, 58, 58, 255));
@@ -56,6 +54,10 @@ int main() {
     sf::RectangleShape listBox(sf::Vector2f(952, 234));
     listBox.setFillColor(sf::Color(191, 230, 245, 255));
     listBox.setPosition(24, 485);
+
+    sf::Text listText(" ", font, 17);
+    listText.setFillColor(sf::Color(58, 58, 58, 255));
+    listText.setPosition(34, 500);
 
 
     sf::Text verifiedText("Include Unverified Proteins", font, 12);
@@ -110,6 +112,9 @@ int main() {
     int choice1 = 1;
     int choice2 = 1;
     bool update = false;
+    std::string currentId;
+    std::string currentSeq;
+    std::string listStr = "";
 
     while (window.isOpen()){
         sf::Event event;
@@ -119,9 +124,6 @@ int main() {
             }
             if (event.type == sf::Event::TextEntered){
 
-                input.push_back(event.text.unicode);
-                output.setString(input + "|");
-                output.setPosition(34, 103);
 
                 //backspace does not work :(
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::Backspace) && input.length() != 0){
@@ -132,16 +134,40 @@ int main() {
                 else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter) && input.length() != 0){
                     //search for protein name
                     try {
-                        //change proteinName to name
-                        proteinName.setString(sf::String(proteinsMap[input]._id));
-                        //change proteinSequence to sequence
-                        proteinSequence.setString(sf::String(proteinsMap[input]._sequence));
+                        //get protein name and sequence
+                        currentId = proteinsMap.at(input)._id;
+                        currentSeq = proteinsMap.at(input)._sequence;
+                        idVectorIndex = std::distance(proteinIdVec.begin(), find(proteinIdVec.begin(), proteinIdVec.end(), input));
+
+                        //change displayed values of name and sequence
+                        proteinName.setString(currentId);
+                        proteinSequence.setString(currentSeq);
                     }
                     catch(std::out_of_range) {
-                        std::cout << "Protein does not exist in dataset" << endl;
-                        proteinName.setString("Not found");
-                        proteinSequence.setString("The protein Id was not found in this dataset. Please try again.");
+                        //used https://stackoverflow.com/a/4654718
+                        std::string::const_iterator it = input.begin();
+                        while (it != input.end() && std::isdigit(*it)) ++it;
+                        if(!input.empty() && it == input.end()){
+                            idVectorIndex = stoi(input) % proteinIdVec.size();
+
+                            currentId = proteinsMap[proteinIdVec[idVectorIndex]]._id;
+                            currentSeq = proteinsMap[proteinIdVec[idVectorIndex]]._sequence;
+
+                            proteinName.setString(currentId);
+                            proteinSequence.setString(currentSeq);
+
+                        }
+                        else {
+                            std::cout << "Protein does not exist in dataset" << endl;
+                            proteinName.setString("Not found");
+                            proteinSequence.setString("The protein Id was not found in this dataset. Please try again.");
+                        }
                     }
+                }
+                else{
+                    input.push_back(event.text.unicode);
+                    output.setString(input + "|");
+                    output.setPosition(34, 103);
                 }
             }
 
@@ -193,13 +219,14 @@ int main() {
             update = false;
         }//and then somehow print the sorted stuff
 
-        text.setString(
-                proteinIdVec[idVectorIndex    ] + "\n" +
-                proteinIdVec[idVectorIndex + 1] + "\n" +
-                proteinIdVec[idVectorIndex + 2] + "\n" +
-                proteinIdVec[idVectorIndex + 3] + "\n" +
-                proteinIdVec[idVectorIndex + 4]
-        );
+        listStr = "";
+        for (int i = 0; i<11; i++){
+            try{
+                listStr += proteinIdVec[idVectorIndex + i] + "\n";
+            }
+            catch(out_of_range){}
+        }
+        listText.setString(listStr);
 
         window.clear(sf::Color::White);
         window.draw(verifiedText);
@@ -222,6 +249,7 @@ int main() {
         window.draw(ascText);
         window.draw(descending);
         window.draw(desText);
+        window.draw(listText);
 
         window.display();
     }

@@ -13,6 +13,7 @@ struct Protein {
         _sequence = seq;
         _id = id;
     }
+    Protein(){}
 };
 
 
