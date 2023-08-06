@@ -133,9 +133,9 @@ int main() {
                     //search for protein name
                     try {
                         //change proteinName to name
-                        proteinName.setString(sf::string(proteinsMap[input]._id));
+                        proteinName.setString(sf::String(proteinsMap[input]._id));
                         //change proteinSequence to sequence
-                        proteinSequence.setString(sf::string(proteinsMap[input]._sequence));
+                        proteinSequence.setString(sf::String(proteinsMap[input]._sequence));
                     }
                     catch(std::out_of_range) {
                         std::cout << "Protein does not exist in dataset" << endl;
