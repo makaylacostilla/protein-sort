@@ -16,6 +16,8 @@ int main() {
     Parser ToUse;
     ToUse.ParseFile("../uniprotkb.fasta", proteinsMap, proteinIdVec);
     int idVectorIndex = 0;
+
+    //initial sort
     quickSortAscending(proteinIdVec, 0, proteinIdVec.size()-1);
 
     sf::RenderWindow window(sf::VideoMode(1000, 750), "Protein Sort", sf::Style::Close);
@@ -109,7 +111,11 @@ int main() {
     //will be used to decide how to sort
     int choice1 = 1;
     int choice2 = 1;
+
+    //used to only sort when the algo or order has been changed
     bool update = false;
+
+    //what text to display in the boxes on screen
     std::string currentId;
     std::string currentSeq;
     std::string listStr = "";
@@ -123,12 +129,13 @@ int main() {
             if (event.type == sf::Event::TextEntered){
 
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::Backspace) && input.length() != 0){
+                    //delete last character when backspace pressed
                     input.pop_back();
                     output.setString(input + "|");
                     output.setPosition(34, 103);
                 }
                 else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter) && input.length() != 0){
-                    //search for protein name
+                    //search for protein name when enter pressed
                     //get protein name and sequence
                     try {
                         currentId = proteinsMap.at(input)._id;
@@ -154,6 +161,7 @@ int main() {
 
                         }
                         else {
+                            //neither a protein id nor an index. Must be mistake
                             std::cout << "Protein does not exist in dataset" << endl;
                             proteinName.setString("Not found");
                             proteinSequence.setString("The protein Id was not found in this dataset. Please try again.");
@@ -161,6 +169,7 @@ int main() {
                     }
                 }
                 else{
+                    //text to go in the search bar indicating what's been typed
                     input.push_back(event.text.unicode);
                     output.setString(input + "|");
                     output.setPosition(34, 103);
@@ -170,24 +179,28 @@ int main() {
             //switch between sort options
             if (event.type == sf::Event::MouseButtonPressed){
                 if (m.contains(event.mouseButton.x, event.mouseButton.y)){
+                    //merge selected
                     merge.setFillColor(sf::Color(68, 119, 207));
                     quick.setFillColor(sf::Color::White);
                     choice1 = 1;
                     update = true;
                 }
                 if (q.contains(event.mouseButton.x, event.mouseButton.y)){
+                    //quick selected
                     quick.setFillColor(sf::Color(68, 119, 207));
                     merge.setFillColor(sf::Color::White);
                     choice1 = 2;
                     update = true;
                 }
                 if (a.contains(event.mouseButton.x, event.mouseButton.y)){
+                    //ascending selected
                     ascending.setFillColor(sf::Color(68, 119, 207));
                     descending.setFillColor(sf::Color::White);
                     choice2 = 1;
                     update = true;
                 }
                 if (d.contains(event.mouseButton.x, event.mouseButton.y)){
+                    //descending selected
                     descending.setFillColor(sf::Color(68, 119, 207));
                     ascending.setFillColor(sf::Color::White);
                     choice2 = 2;
@@ -201,6 +214,7 @@ int main() {
             update = false;
         }
         if (choice1 == 1 && choice2 == 2 && update == true){
+            //do merge descending
             mergeSortDescending(proteinIdVec, 0, proteinIdVec.size() - 1);
             update = false;
         }
@@ -213,8 +227,9 @@ int main() {
             //do quick descending
             quickSortReversed(proteinIdVec, 0, proteinIdVec.size() - 1);
             update = false;
-        }//and then somehow print the sorted stuff
+        }
 
+        //Generate text for the bottom browse box
         listStr = "";
         for (int i = 0; i<10; i++){
             try{
