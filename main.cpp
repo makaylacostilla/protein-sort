@@ -19,6 +19,7 @@ int main() {
     Parser ToUse;
     ToUse.ParseFile("../uniprotkb.fasta", proteinsMap, proteinIdVec);
     int idVectorIndex = 0;
+    quickSortAscending(proteinIdVec, 0, proteinIdVec.size()-1);
 
     sf::RenderWindow window(sf::VideoMode(1000, 750), "Protein Sort", sf::Style::Close);
     sf::Font font;
@@ -133,17 +134,17 @@ int main() {
                 }
                 else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter) && input.length() != 0){
                     //search for protein name
-                    try {
-                        //get protein name and sequence
-                        currentId = proteinsMap.at(input)._id;
-                        currentSeq = proteinsMap.at(input)._sequence;
-                        idVectorIndex = std::distance(proteinIdVec.begin(), find(proteinIdVec.begin(), proteinIdVec.end(), input));
+                    //get protein name and sequence
+                    currentId = proteinsMap.at(input)._id;
+                    currentSeq = proteinsMap.at(input)._sequence;
+                    idVectorIndex = findInSortedVec(proteinIdVec, input, 0, proteinIdVec.size() - 1, choice2 == 2);
 
+                    if (idVectorIndex != -1) {
                         //change displayed values of name and sequence
                         proteinName.setString(currentId);
                         proteinSequence.setString(currentSeq);
                     }
-                    catch(std::out_of_range) {
+                    else{//did not find input in vec, try using it as index
                         //used https://stackoverflow.com/a/4654718
                         std::string::const_iterator it = input.begin();
                         while (it != input.end() && std::isdigit(*it)) ++it;

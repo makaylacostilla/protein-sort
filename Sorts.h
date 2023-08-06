@@ -174,4 +174,27 @@ void quickSortReversed(std::vector<std::string>& arr, int low, int high){
     }
 }
 
+int findInSortedVec(std::vector<std::string>& arr, std::string toFind, int low, int high, bool descending){
+
+    int m = low + (high - low)/2;
+    if(arr[m] == toFind)
+        return m;
+    else if (low >= high){
+        return -1;
+    }
+    else if (descending && arr[m] > toFind){
+        return findInSortedVec(arr, toFind, m, high, true);
+    }
+    else if (descending && arr[m] < toFind){
+        return findInSortedVec(arr, toFind, low, m, true);
+    }
+    else if (!descending && arr[m] > toFind){
+        return findInSortedVec(arr, toFind, low, m, false);
+    }
+    else if (!descending && arr[m] < toFind){
+        return findInSortedVec(arr, toFind, m, high, false);
+    }
+    return -1;
+}
+
 #endif //LOCALVERSION_SORTS_H
