@@ -61,7 +61,7 @@ int main() {
     listText.setPosition(34, 500);
 
 
-    sf::Text verifiedText("Include Unverified Proteins", font, 12);
+    sf::Text verifiedText(to_string(proteinIdVec.size()) + " proteins in uniprotkb.fasta", font, 12);
     verifiedText.setFillColor(sf::Color(35, 35, 35, 255));
     verifiedText.setPosition(97, 43);
 
